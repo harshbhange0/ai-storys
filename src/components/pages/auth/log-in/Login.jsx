@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import InputS from "../../../other-components/InputS";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../../firebase/firebaseLocal";
+import { useFirebase } from "../../../context/UserContext";
 
 function Login() {
+  const navigate = useNavigate();
+  const firebaseCreateUser = useFirebase();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const handelEmail = (value) => {
@@ -14,15 +15,11 @@ function Login() {
     setPassword(value);
   };
 
-  const handelLogIn = async (e) => {
+  const handelLogIn = (e) => {
     e.preventDefault();
     try {
-      const newUser = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password,
-      );
-      console.log(newUser);
+      navigate("/");
+      firebaseCreateUser.logUser(email, password);
     } catch (error) {
       console.log(error.massage);
     }
@@ -63,7 +60,9 @@ function Login() {
           </button>
           <span className="text-white/50">
             Don't Have a Account{" "}
-            <Link to="/user/registration" className="text-white/90">Register here </Link>
+            <Link to="/user/registration" className="text-white/90">
+              Register here{" "}
+            </Link>
           </span>
         </>
       </div>

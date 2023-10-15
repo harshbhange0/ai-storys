@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import InputS from "../../../other-components/InputS";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../../firebase/firebaseLocal";
+import { useFirebase } from "../../../context/UserContext";
 
 function Register() {
+  const navigate = useNavigate();
+  const firebaseCreateUser = useFirebase();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const handelEmail = (value) => {
@@ -17,12 +18,8 @@ function Register() {
   const handelRegister = async (e) => {
     e.preventDefault();
     try {
-      const newUser = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password,
-      );
-      console.log(newUser);
+      firebaseCreateUser.logUser(email, password);
+      navigate("/");
     } catch (error) {
       console.log(error.massage);
     }

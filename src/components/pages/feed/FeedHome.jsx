@@ -1,17 +1,17 @@
-import React from 'react'
-import {signOut} from "firebase/auth"
-import {auth } from "../../firebase/firebaseLocal"
-import { Link } from 'react-router-dom'
+import React from "react";
+
+import { Link } from "react-router-dom";
+import LoggedOutBtn from "../../other-components/LoggedOutBtn";
+
+
 function FeedHome() {
-const logOut=()=>{
-  signOut(auth)
-}
+
   return (
     <div>
-      <button onClick={logOut}>logOut</button>
-<Link to="/user/log-in">Log in</Link>
+      <LoggedOutBtn/>
+      <Link to="/user/log-in">Log in</Link>
     </div>
-  )
+  );
 }
 
-export default FeedHome
+export default FeedHome;

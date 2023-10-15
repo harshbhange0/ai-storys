@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Route, Routes, redirect } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import FeedHome from "./components/pages/feed/FeedHome";
 import UserProfile from "./components/pages/profile/UserProfile";
 import StoryMakerHome from "./components/pages/story-maker/StoryMakerHome";
@@ -9,18 +9,38 @@ import Register from "./components/pages/auth/register/Register";
 import NotFound from "./components/pages/not-found/NotFound";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./components/firebase/firebaseLocal";
+import { Navigate, useLocation, Outlet } from "react-router-dom";
 export default function App() {
-  const [logT, setLogT] = useState("");
-
+  const [user, setUser] = useState(false);
+  const [url, setUrl] = useState(null);
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        console.log( user);
+    UserLoggedIn();
+  }, [user]);
+  const location = useLocation();
+  const UserLoggedIn = () => {
+    onAuthStateChanged(auth, (authUser) => {
+      const storedAccessToken = localStorage.getItem("AccessToken");
+      if (authUser) {
+        setUrl("/user/log-in");
+        if (authUser.accessToken !== storedAccessToken) {
+          setUser(false); //User is logged out
+          setUrl("/user/registration");
+        } else {
+          setUser(true); // User is logged in
+        }
       } else {
-        console.log("user not logged in");
+        setUrl("/user/log-in");
+        setUser(false); // User is logged out
       }
     });
-  });
+  };
+  const Redirect = () => {
+    return user ? (
+      <Outlet />
+    ) : (
+      <Navigate to={url} state={{ from: location }} replace />
+    );
+  };
   return (
     <>
       <Routes>
@@ -29,10 +49,12 @@ export default function App() {
         <Route path="/user/registration" element={<Register />} />
         {/* private routes */}
 
-        <Route path="/" element={<FeedHome />} />
-        <Route path="/user/profile" element={<UserProfile />} />
-        <Route path="/user/stories" element={<StoryMakerHome />} />
-        <Route path="/user/stories/new" element={<UserStoryNew />} />
+        <Route element={<Redirect />}>
+          <Route path="/" element={<FeedHome />} />
+          <Route path="/user/profile" element={<UserProfile />} />
+          <Route path="/user/stories" element={<StoryMakerHome />} />
+          <Route path="/user/stories/new" element={<UserStoryNew />} />
+        </Route>
 
         {/* public routes */}
         <Route path="/*" element={<NotFound />} />
