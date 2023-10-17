@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { createContext } from "react";
-import { auth } from "../firebase/firebaseLocal";
+import { app, auth } from "../firebase/firebaseLocal";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
+import { getDatabase, set, ref } from "firebase/database";
 import { useContext } from "react";
 
 const FirebaseUserContext = createContext(null);
@@ -20,9 +21,7 @@ export const FirebaseProvider = ({ children }) => {
       if (user) {
         const userToken = user?.accessToken;
         localStorage.setItem("AccessToken", userToken);
-        console.log("User  logged in");
       } else {
-        console.log("User not logged in");
       }
     });
   };
@@ -60,8 +59,15 @@ export const FirebaseProvider = ({ children }) => {
     checkUserLoggedIn();
   }, []);
 
+  const db = getDatabase(app);
+  const addUserToRealTimeDataBaseFirebase = (key, data) => {
+    set(ref(db, key), data);
+  };
+
   return (
-    <FirebaseUserContext.Provider value={{ regUser, logUser, logOut }}>
+    <FirebaseUserContext.Provider
+      value={{ regUser, logUser, logOut, addUserToRealTimeDataBaseFirebase }}
+    >
       {children}
     </FirebaseUserContext.Provider>
   );

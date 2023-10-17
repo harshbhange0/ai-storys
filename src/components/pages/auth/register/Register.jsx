@@ -8,18 +8,43 @@ function Register() {
   const firebaseCreateUser = useFirebase();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [FName, setFName] = useState("");
+  const [LName, setLName] = useState("");
+
   const handelEmail = (value) => {
     setEmail(value);
+  };
+
+  const handelFName = (value) => {
+    const firstName = value?.toUpperCase();
+    setFName(firstName);
+  };
+  const handelLName = (value) => {
+    const lastName = value?.toUpperCase();
+    setLName(lastName);
   };
   const handelPassword = (value) => {
     setPassword(value);
   };
-
   const handelRegister = async (e) => {
     e.preventDefault();
     try {
-      firebaseCreateUser.logUser(email, password);
+      firebaseCreateUser.regUser(email, password);
       navigate("/");
+      setUserInfoToDb();
+    } catch (error) {
+      console.log(error.massage);
+    }
+  };
+
+  const setUserInfoToDb = () => {
+    try {
+      firebaseCreateUser.addUserToRealTimeDataBaseFirebase(`/users/${FName}`, {
+        date: new Date(),
+        email,
+        password,
+        name: `${FName} ${LName}`,
+      });
     } catch (error) {
       console.log(error.massage);
     }
@@ -35,6 +60,24 @@ function Register() {
         <h1 className="text-center text-4xl font-semibold text-white">
           Register
         </h1>
+        <div className="flex flex-row gap-8">
+          <InputS
+            className=" w-full rounded-md border border-purple-950/10
+          bg-purple-500/10 px-3 py-1 text-center text-lg
+          text-white/80 outline-none transition-all duration-200 ease-in placeholder:text-center placeholder:text-lg placeholder:text-purple-300  hover:bg-purple-500 focus:border-purple-200"
+            placeholder="First Name"
+            type="text"
+            inputValue={handelFName}
+          />
+          <InputS
+            className=" w-full rounded-md border border-purple-950/10
+          bg-purple-500/10 px-3 py-1 text-center text-lg
+          text-white/80 outline-none transition-all duration-200 ease-in placeholder:text-center placeholder:text-lg placeholder:text-purple-300  hover:bg-purple-500 focus:border-purple-200"
+            placeholder="Last Name"
+            type="text"
+            inputValue={handelLName}
+          />
+        </div>
         <InputS
           className=" w-full rounded-md border border-purple-950/10
         bg-purple-500/10 px-3 py-1 text-center text-lg
