@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { FirebaseProvider } from "./components/context/UserContext";
 import { BrowserRouter } from "react-router-dom";
+import { FirebaseProvider } from "./context/UserContext";
 import App from "./App.jsx";
 import "./index.css";
 

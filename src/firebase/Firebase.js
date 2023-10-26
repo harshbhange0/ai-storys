@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+// import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
+import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCogrh5tsJIbMRWvdhnOUvmRj_02xqsr6Q",
@@ -13,6 +14,9 @@ const firebaseConfig = {
   databaseURL: "https://ai-story-auth-default-rtdb.firebaseio.com/",
 };
 
-export const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const firebaseDB = getDatabase(app);
 // const analytics = getAnalytics(app);
-export const auth = getAuth(app);
+const authFireBase = getAuth(app);
+
+export { app, authFireBase, firebaseDB };
